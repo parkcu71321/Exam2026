@@ -38,7 +38,7 @@ public class Chap14_01Controller {
         return "redirect:/exam14_01";
     }
 
-    //    Update(update)할 내용 입력
+    //   Read(Update(update)할 내용 입력하기 위한 조회)
     @GetMapping("/edit/{id}")
     public String updateInputMethod(@PathVariable(name = "id")int id, Model model){
         Optional<Member3> member3 =  repository.findById(id);
@@ -46,12 +46,14 @@ public class Chap14_01Controller {
         return "viewPage02_edit";
     }
 
+    //    Update(update) 실행
     @PostMapping("/update")
     public String updateMember(@ModelAttribute("member")Member3 member3){
         repository.save(member3);
         return "redirect:/exam14_01";
     }
 
+    //    Delete 실행
     @GetMapping("/delete/{id}")
     public String deleteMember(@PathVariable(name = "id")int id){
         repository.deleteById(id);
