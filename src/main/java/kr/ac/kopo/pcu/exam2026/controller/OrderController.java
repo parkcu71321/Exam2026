@@ -60,4 +60,60 @@ public class OrderController {
         return "redirect:/order/orderCustomerInfo";
     }
 
+    @GetMapping("/orderCustomerInfo")
+    public String requestCustomerInfoForm(Model model){
+        model.addAttribute("customer", order.getCustomer());
+        return "orderCustomerInfo";
+    }
+
+    @PostMapping("/orderCustomerInfo")
+    public String requestCustomerInfo(@ModelAttribute Customer customer){
+        order.setCustomer(customer);
+        return "redirect:/order/orderShippingInfo";
+    }
+
+    @GetMapping("/orderShippingInfo")
+    public String requestShippingInfoForm(Model model){
+        model.addAttribute("shipping", order.getShipping());
+        return "orderShippingInfo";
+    }
+
+    @PostMapping("/orderShippingInfo")
+    public String requestShippingInfo(@Valid @ModelAttribute Shipping shipping, BindingResult bindingResult, Model model){
+        if (bindingResult.hasErrors())
+            return "orderShippingInfo";
+        order.setShipping(shipping);
+        model.addAttribute("order", order);
+        return "redirect:/order/orderConfirmation";
+    }
+
+    @GetMapping("/orderConfirmation")
+    public String requestConfirmation(Model model){
+        model.addAttribute("bookList", listOfBooks);
+        model.addAttribute("order", order);
+        return "orderConfirmation";
+    }
+
+    @GetMapping("/orderFinished")
+    public String requestOrderFinished(HttpServletRequest request, Model model){
+        orderService.saveOrder(order);
+        model.addAttribute("order", order);
+        HttpSession session = request.getSession();
+
+        if (session != null)
+            session.invalidate();
+
+        return "orderFinished";
+    }
+
+    @GetMapping("/orderCancelled")
+    public String requestCancelled(HttpServletRequest request){
+        HttpSession session = request.getSession();
+
+        if(session != null)
+            session.invalidate();
+
+        return "orderCancelled";
+    }
+
 }
